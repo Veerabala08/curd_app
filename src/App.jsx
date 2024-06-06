@@ -558,28 +558,32 @@ const App = () => {
       }
     });
   }
-
   async function updateInfo(userID) {
-    const { data, error } = await supabase
-      .from("users_info")
-      .update({
-        id: updateUser.id,
-        name: updateUser.name,
-        mobile_no: updateUser.mobile_no,
-        email: updateUser.email,
-        address: updateUser.address,
-      })
-      .eq("id", userID);
-    if (error) {
-      console.log(error);
+    const newErrors = validateForm(updateUser);
+    if (Object.keys(newErrors).length === 0) {
+      const { data, error } = await supabase
+        .from("users_info")
+        .update({
+          id: updateUser.id,
+          name: updateUser.name,
+          mobile_no: updateUser.mobile_no,
+          email: updateUser.email,
+          address: updateUser.address,
+        })
+        .eq("id", userID);
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        console.log(data);
+      }
+      handleClose1();
+      fetchUsers();
+    } else {
+      setErrors(newErrors);
     }
-    if (data) {
-      console.log(data);
-    }
-    handleClose1();
-    fetchUsers();
   }
-
+  
   const capitalizeFirstLetter = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
@@ -768,7 +772,7 @@ const App = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose1}>
+          <Button variant="secondary" onClick={ handleClose1}>
             Close
           </Button>
           <Button
