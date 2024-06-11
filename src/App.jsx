@@ -1,11 +1,14 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Navbar, Container, Button } from "react-bootstrap";
 import ModalDialog from "./Components/ModalDialog";
 import UserTable from "./Components/Table";
 import { supabase } from "./createClient";
+import { useNavigate } from "react-router-dom";
 
-const App = () => {
+
+const App = ( {token} ) => {
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [formValues, setFormValues] = useState({
@@ -17,7 +20,7 @@ const App = () => {
   });
   const [errors, setErrors] = useState({});
   const [mode, setMode] = useState("create");
-
+   let navigate = useNavigate()
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -106,6 +109,7 @@ const App = () => {
 
   const createUser = async () => {
     await supabase.from("users_info").insert({
+      name:formValues.name,
        mobile_no: formValues.mobile_no,
       email: formValues.email,
       address: formValues.address,
@@ -123,8 +127,6 @@ const App = () => {
     setMode("update");
     setShowModal(true);
   };
-
-
 
   const validateForm = (data) =>{
     let errors = {};
@@ -163,14 +165,22 @@ const App = () => {
     const mobileRegex = /^(\d{3})[- ]?(\d{3})[- ]?(\d{4})$/;
     return mobileRegex.test(mobile_no);
   };
+  function handleLogout(){
+    sessionStorage.removeItem('token')
+    navigate('/')
+  }
   return (
-    <>
+    <>    
       <Navbar className="bg-body-tertiary">
         <Container>
-          <Navbar.Brand href="#home">CURD Operation</Navbar.Brand>
-          <Button variant="primary"  onClick={handleCreate}>
+          <Navbar.Brand href="#home">CURD Operation {token.user.user_metadata.first_name}</Navbar.Brand>
+          <div><Button variant="primary"  onClick={handleCreate}>
             Create a New User
           </Button>
+          <Button variant="danger" onClick={handleLogout}>
+            Logout
+          </Button>
+          </div>
         </Container>
       </Navbar>
 

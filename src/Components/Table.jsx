@@ -18,7 +18,7 @@ const UserTable = ({ allusers, handleEdit, handleDelete }) => {
       <tbody>
         {allusers.map((user, index) => (
           <tr key={index}>
-            <td>{user.id}</td>
+            <td>{index+1}</td>
             <td>{user.name}</td>
             <td>{user.mobile_no}</td>
             <td>{user.email}</td>
